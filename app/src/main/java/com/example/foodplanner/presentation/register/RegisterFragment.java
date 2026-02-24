@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.foodplanner.R;
-import com.example.foodplanner.data.Meal;
 import com.example.foodplanner.databinding.FragmentRegisterBinding;
 
 public class RegisterFragment extends Fragment {
