@@ -46,10 +46,6 @@ public class SplashFragment extends Fragment {
             public void onAnimationEnd(Animator animation) {
                 Log.d("onEndSplashFragment", "onAnimationEnd: ");
 
-//                NavOptions navOptions = new NavOptions.Builder()
-//                        .setPopUpTo(R.id.splashFragment2, true)
-//                        .build();
-
                 NavHostFragment.findNavController(SplashFragment.this)
                         .navigate(R.id.action_splashFragment2_to_loginFragment);
             }

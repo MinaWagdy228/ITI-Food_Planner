@@ -1,18 +1,29 @@
 package com.example.foodplanner.network;
 
+import com.example.foodplanner.network.MealApiServices;
+
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Network {
-    private static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
-    private static ApiServices apiServices;
 
-    public static ApiServices getApiServices() {
+    private static final String BASE_URL = "https://www.themealdb.com/api/json/v1/1/";
+    private static Retrofit retrofit;
+    private static MealApiServices apiServices;
+
+    private Network() {
+    }
+
+    public static MealApiServices getApiService() {
         if (apiServices == null) {
-            apiServices = new Retrofit.Builder()
+            retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(retrofit2.converter.gson.GsonConverterFactory.create())
-                    .build()
-                    .create(ApiServices.class);
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                    .build();
+
+            apiServices = retrofit.create(MealApiServices.class);
         }
         return apiServices;
     }

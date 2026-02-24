@@ -11,8 +11,4 @@ public class MealsResponse {
     public List<Meal> getMeals() {
         return meals;
     }
-
-    public void setMeals(List<Meal> meals) {
-        this.meals = meals;
-    }
 }

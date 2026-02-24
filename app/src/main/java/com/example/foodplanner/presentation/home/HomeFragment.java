@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.data.model.MealsResponse;
 import com.example.foodplanner.databinding.FragmentHomeBinding;
-import com.example.foodplanner.network.Network;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,23 +37,23 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Network.getApiServices().getRandomMeal().enqueue(
-                new Callback<MealsResponse>() {
-                    @Override
-                    public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
-                        if(response.isSuccessful() && response.body() != null) {
-                            Meal mealName = response.body().getMeals().get(0);
-                            Log.d("HomeFragment", "Random Meal: " + mealName.toString()
-                            );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<MealsResponse> call, Throwable t) {
-
-                    }
-                }
-        );
+//        Network.getApiServices().getRandomMeal().enqueue(
+//                new Callback<MealsResponse>() {
+//                    @Override
+//                    public void onResponse(Call<MealsResponse> call, Response<MealsResponse> response) {
+//                        if(response.isSuccessful() && response.body() != null) {
+//                            Meal mealName = response.body().getMeals().get(0);
+//                            Log.d("HomeFragment", "Random Meal: " + mealName.toString()
+//                            );
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<MealsResponse> call, Throwable t) {
+//
+//                    }
+//                }
+//        );
     }
 
     @Override
