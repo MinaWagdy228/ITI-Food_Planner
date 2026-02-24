@@ -1,6 +1,7 @@
 package com.example.foodplanner.presentation.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -9,15 +10,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+import com.example.foodplanner.R;
+import com.example.foodplanner.data.model.Category;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.FragmentHomeBinding;
 
-public class HomeFragment extends Fragment implements ViewHome {
+import java.util.List;
+
+public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicked {
 
     private FragmentHomeBinding binding;
     private Presenter presenter;
+    private CategoriesAdapter categoriesAdapter;
 
     public HomeFragment() {
         // Required empty constructor
@@ -37,7 +45,17 @@ public class HomeFragment extends Fragment implements ViewHome {
         super.onViewCreated(view, savedInstanceState);
 
         presenter = new PresenterImp(this);
-        presenter.getRandomMeal(); // MVP call (NOT direct Network call)
+        presenter.getRandomMeal();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("HomeFragment", "onResume: triggered");
+        if (presenter != null) {
+            presenter.getCategories();
+            Log.d("HomeFragment", "onResume: Refreshed categories");
+        }
     }
 
     @Override
@@ -64,10 +82,39 @@ public class HomeFragment extends Fragment implements ViewHome {
         // Optional: hide ProgressBar later
     }
 
+    private void setupCategoriesRecycler() {
+        categoriesAdapter = new CategoriesAdapter(this);
+        binding.rvCategories.setAdapter(categoriesAdapter);
+        binding.rvCategories.setLayoutManager(
+                new LinearLayoutManager(
+                        requireContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false
+                )
+        );
+    }
+
+    @Override
+    public void showCategories(List<Category> categories) {
+        if (categoriesAdapter == null) {
+            setupCategoriesRecycler();
+        }
+        categoriesAdapter.setCategories(categories);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         presenter.onDestroy();
         binding = null;
+    }
+
+    @Override
+    public void onCategoryClicked(String categoryName) {
+        HomeFragmentDirections.ActionHomeFragmentToFilteredMealsFragment action =
+                HomeFragmentDirections.actionHomeFragmentToFilteredMealsFragment(categoryName);
+
+        NavHostFragment.findNavController(HomeFragment.this)
+                .navigate(action);
     }
 }

@@ -2,10 +2,14 @@ package com.example.foodplanner.presentation.home;
 
 import android.util.Log;
 
+import com.example.foodplanner.data.model.CategoriesResponse;
+import com.example.foodplanner.data.model.Category;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.data.model.MealsResponse;
 import com.example.foodplanner.network.Network;
 
+
+import java.util.List;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -57,6 +61,29 @@ public class PresenterImp implements Presenter {
             viewHome.showError(throwable.getMessage());
         }
         Log.e("HomePresenter", "API Error: " + throwable.getMessage());
+    }
+
+    @Override
+    public void getCategories() {
+        compositeDisposable.add(
+                Network.getApiService()
+                        .getCategories()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                this::handleCategoriesSuccess,
+                                this::handleError
+                        )
+        );
+    }
+
+    private void handleCategoriesSuccess(CategoriesResponse response) {
+        if (response != null && response.getCategories() != null) {
+            List<Category> categories = response.getCategories();
+            if (viewHome != null) {
+                viewHome.showCategories(categories);
+            }
+        }
     }
 
     @Override

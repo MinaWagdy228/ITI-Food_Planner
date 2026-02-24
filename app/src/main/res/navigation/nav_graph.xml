@@ -40,7 +40,11 @@
         android:id="@+id/homeFragment"
         android:name="com.example.foodplanner.presentation.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_filteredMealsFragment"
+            app:destination="@id/filteredMealsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mealDetailsFragment"
         android:name="com.example.foodplanner.presentation.mealdetails.MealDetailsFragment"
@@ -61,4 +65,17 @@
         android:name="com.example.foodplanner.presentation.favorites.FavouriteFragment"
         android:label="fragment_favourite"
         tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/filteredMealsFragment"
+        android:name="com.example.foodplanner.presentation.filteredmeals.FilteredMealsFragment"
+        android:label="Filtered Meals"
+        tools:layout="@layout/fragment_filtered_meals">
+
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_filteredMealsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>
