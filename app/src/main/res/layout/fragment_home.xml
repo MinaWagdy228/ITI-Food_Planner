@@ -55,11 +55,10 @@
         app:layout_constraintTop_toBottomOf="@id/cardSearch"
         app:layout_constraintStart_toStartOf="parent"/>
 
-    <!-- Meal Card -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardMealOfDay"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="220dp"
         android:layout_margin="20dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="6dp"
@@ -67,12 +66,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/imgMeal"
+        <!-- Use FrameLayout to stack image + text -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"/>
+            android:layout_height="match_parent">
+
+            <!-- Meal Image (Background) -->
+            <ImageView
+                android:id="@+id/imgMeal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_background"/>
+
+            <!-- Dark Gradient Overlay (for readability) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#66000000"/>
+
+            <!-- Meal Name (Overlay ON image) -->
+            <TextView
+                android:id="@+id/tvMealName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Meal Name"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:layout_gravity="bottom|start"
+                android:padding="16dp"/>
+
+        </FrameLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
