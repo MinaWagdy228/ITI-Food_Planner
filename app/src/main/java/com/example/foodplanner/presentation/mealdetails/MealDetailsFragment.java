@@ -1,41 +1,146 @@
 package com.example.foodplanner.presentation.mealdetails;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.foodplanner.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.FragmentMealDetailsBinding;
 
-public class MealDetailsFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
 
-private FragmentMealDetailsBinding bindings;
+public class MealDetailsFragment extends Fragment
+        implements ViewMealDetails, OnFavoriteClickListener {
+
+    private FragmentMealDetailsBinding binding;
+    private MealDetailsAdapter adapter;
+    private Presenter presenter;
+    private String mealId;
 
     public MealDetailsFragment() {
         // Required empty public constructor
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        bindings = FragmentMealDetailsBinding.inflate(inflater, container, false);
-        return bindings.getRoot();
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentMealDetailsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Safe Args: get mealId
+        if (getArguments() != null) {
+            MealDetailsFragmentArgs args = MealDetailsFragmentArgs.fromBundle(getArguments());
+            mealId = args.getMealId();
+        }
+
+        setupRecyclerView();
+
+        presenter = new PresenterImp(this);
+        presenter.getMealDetails(mealId);
+    }
+
+    private void setupRecyclerView() {
+        adapter = new MealDetailsAdapter(this); // interface passed to adapter
+        binding.rvMealDetails.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvMealDetails.setAdapter(adapter);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        bindings = null;
+    public void showMealDetails(Meal meal) {
+        List<DetailItem> detailItems = buildDetailItems(meal);
+        adapter.setItems(detailItems);
+    }
+
+    private List<DetailItem> buildDetailItems(Meal meal) {
+        List<DetailItem> items = new ArrayList<>();
+
+        // 1️⃣ Header (Image + Title + Favorite Icon)
+        items.add(new DetailItem(DetailItem.TYPE_HEADER, meal));
+
+        // 2️⃣ Ingredients (Dynamic extraction 1–20)
+        addIngredient(items, meal.getStrIngredient1());
+        addIngredient(items, meal.getStrIngredient2());
+        addIngredient(items, meal.getStrIngredient3());
+        addIngredient(items, meal.getStrIngredient4());
+        addIngredient(items, meal.getStrIngredient5());
+        addIngredient(items, meal.getStrIngredient6());
+        addIngredient(items, meal.getStrIngredient7());
+        addIngredient(items, meal.getStrIngredient8());
+        addIngredient(items, meal.getStrIngredient9());
+        addIngredient(items, meal.getStrIngredient10());
+        addIngredient(items, meal.getStrIngredient11());
+        addIngredient(items, meal.getStrIngredient12());
+        addIngredient(items, meal.getStrIngredient13());
+        addIngredient(items, meal.getStrIngredient14());
+        addIngredient(items, meal.getStrIngredient15());
+        addIngredient(items, meal.getStrIngredient16());
+        addIngredient(items, meal.getStrIngredient17());
+        addIngredient(items, meal.getStrIngredient18());
+        addIngredient(items, meal.getStrIngredient19());
+        addIngredient(items, meal.getStrIngredient20());
+
+        // 3️⃣ Instructions Section
+        if (!TextUtils.isEmpty(meal.getStrInstructions())) {
+            items.add(new DetailItem(
+                    DetailItem.TYPE_INSTRUCTIONS,
+                    meal.getStrInstructions()
+            ));
+        }
+
+        // 4️⃣ YouTube Section (Embedded Player)
+        if (!TextUtils.isEmpty(meal.getStrYoutube())) {
+            items.add(new DetailItem(
+                    DetailItem.TYPE_YOUTUBE,
+                    meal.getStrYoutube()
+            ));
+        }
+
+        return items;
+    }
+
+    private void addIngredient(List<DetailItem> items, String ingredient) {
+        if (!TextUtils.isEmpty(ingredient) && !ingredient.equals("null")) {
+            items.add(new DetailItem(DetailItem.TYPE_INGREDIENT, ingredient));
+        }
+    }
+
+    // ⭐ Favorite Click → UI → Presenter (as you requested)
+    @Override
+    public void onFavoriteClicked(Meal meal) {
+        presenter.onFavoriteClicked(meal);
+    }
+
+    @Override
+    public void showError(String message) {
+        // You can add Snackbar later
+    }
+
+    @Override
+    public void showLoading() {
+        // Optional: ProgressBar
+    }
+
+    @Override
+    public void hideLoading() {
+        // Optional
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        presenter.onDestroy();
     }
 }

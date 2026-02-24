@@ -76,4 +76,5 @@ dependencies {
     // Navigation Component (Fragments + UI)
     implementation("androidx.navigation:navigation-fragment:2.7.7")
     implementation("androidx.navigation:navigation-ui:2.7.7")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
 }

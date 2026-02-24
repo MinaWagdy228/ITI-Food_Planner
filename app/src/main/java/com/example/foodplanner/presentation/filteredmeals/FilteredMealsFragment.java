@@ -84,7 +84,7 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        presenter.onDestroy(); // VERY IMPORTANT (RxJava lifecycle)
+        presenter.onDestroy();
         binding = null;
     }
 }
