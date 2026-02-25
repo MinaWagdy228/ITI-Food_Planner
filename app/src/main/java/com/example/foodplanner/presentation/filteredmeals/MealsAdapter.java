@@ -25,6 +25,7 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.MealViewHold
 
     public void setMeals(List<Meal> meals) {
         this.meals = meals;
+        notifyDataSetChanged();
     }
 
     @NonNull

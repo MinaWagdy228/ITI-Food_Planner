@@ -1,7 +1,6 @@
 package com.example.foodplanner.presentation.register;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,20 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.foodplanner.R;
 import com.example.foodplanner.databinding.FragmentRegisterBinding;
 
-public class RegisterFragment extends Fragment {
+import java.util.Objects;
+
+public class RegisterFragment extends Fragment implements ViewRegister {
 
     private FragmentRegisterBinding binding;
+    private RegisterPresenter presenter;
 
     public RegisterFragment() {
+        super(R.layout.fragment_register);
     }
 
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRegisterBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -33,57 +35,47 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ///Meal meal = RegisterFragmentArgs.fromBundle(getArguments()).getSmallMeal();
-        ///Toast.makeText(getContext(), "Received Meal: " + meal.name, Toast.LENGTH_SHORT).show();
-        binding.btnRegister.setOnClickListener(v -> handleRegister());
 
-        binding.tvBackToLogin.setOnClickListener(v -> {
-            NavHostFragment.findNavController(RegisterFragment.this)
-                    .navigate(R.id.action_registerFragment_to_loginFragment);
+        presenter = new RegisterPresenterImp(this, requireContext());
+
+        binding.btnRegister.setOnClickListener(v -> {
+            presenter.register(
+                    Objects.requireNonNull(binding.etName.getText()).toString().trim(),
+                    Objects.requireNonNull(binding.etRegisterEmail.getText()).toString().trim(),
+                    Objects.requireNonNull(binding.etRegisterPassword.getText()).toString().trim(),
+                    Objects.requireNonNull(binding.etConfirmPassword.getText()).toString().trim()
+            );
         });
     }
 
-    private void handleRegister() {
-        String name = binding.etName.getText().toString().trim();
-        String email = binding.etRegisterEmail.getText().toString().trim();
-        String password = binding.etRegisterPassword.getText().toString().trim();
-        String confirmPassword = binding.etConfirmPassword.getText().toString().trim();
-
-        // Reset previous errors
-        binding.tilPassword.setError(null);
-        binding.tilConfirmPassword.setError(null);
-
-        if (TextUtils.isEmpty(name) ||
-                TextUtils.isEmpty(email) ||
-                TextUtils.isEmpty(password) ||
-                TextUtils.isEmpty(confirmPassword)) {
-
-            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Password length validation (professional touch)
-        if (password.length() < 6) {
-            binding.tilPassword.setError("Password must be at least 6 characters");
-            return;
-        }
-
-        // Confirm Password validation (NEW)
-        if (!password.equals(confirmPassword)) {
-            binding.tilConfirmPassword.setError("Passwords do not match");
-            return;
-        }
-
-        // Temporary success (MVP logic will move to Presenter later)
-        Toast.makeText(getContext(), "Registration Successful", Toast.LENGTH_SHORT).show();
-
-        NavHostFragment.findNavController(RegisterFragment.this)
+    @Override
+    public void onRegisterSuccess() {
+        // Navigate to Home after successful register
+        NavHostFragment.findNavController(this)
                 .navigate(R.id.action_registerFragment_to_loginFragment);
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
+
+    @Override
+    public void showError(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Prevent memory leaks (VERY IMPORTANT)
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
+        binding = null;
     }
 }

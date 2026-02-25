@@ -46,6 +46,12 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
         presenter = new PresenterImp(this);
         presenter.getRandomMeal();
+
+        // Setup SwipeRefreshLayout
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            presenter.getRandomMeal();
+            presenter.getCategories();
+        });
     }
 
     @Override
@@ -65,11 +71,21 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
         Glide.with(requireContext())
                 .load(meal.getStrMealThumb())
                 .into(binding.imgMeal);
+
+        // Stop refreshing animation
+        if (binding.swipeRefresh.isRefreshing()) {
+            binding.swipeRefresh.setRefreshing(false);
+        }
     }
 
     @Override
     public void showError(String message) {
         Toast.makeText(getContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+
+        // Stop refreshing animation on error
+        if (binding.swipeRefresh.isRefreshing()) {
+            binding.swipeRefresh.setRefreshing(false);
+        }
     }
 
     @Override
@@ -100,6 +116,11 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
             setupCategoriesRecycler();
         }
         categoriesAdapter.setCategories(categories);
+
+        // Stop refreshing animation
+        if (binding.swipeRefresh.isRefreshing()) {
+            binding.swipeRefresh.setRefreshing(false);
+        }
     }
 
     @Override

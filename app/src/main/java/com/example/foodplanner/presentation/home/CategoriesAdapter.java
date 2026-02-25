@@ -24,6 +24,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     public void setCategories(List<Category> categories) {
         this.categories = categories;
+        notifyDataSetChanged();
     }
 
     @NonNull

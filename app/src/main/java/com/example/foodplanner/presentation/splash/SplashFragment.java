@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.foodplanner.R;
+import com.example.foodplanner.data.model.dataSource.local.SessionManager;
 import com.example.foodplanner.databinding.FragmentSplashBinding;
 
 public class SplashFragment extends Fragment {
@@ -40,14 +41,24 @@ public class SplashFragment extends Fragment {
 
         binding.lottieSplash.playAnimation();
 
-        LottieAnimationView animationView = binding.lottieSplash;
-        animationView.addAnimatorListener(new AnimatorListenerAdapter() {
+        binding.lottieSplash.addAnimatorListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                Log.d("onEndSplashFragment", "onAnimationEnd: ");
 
-                NavHostFragment.findNavController(SplashFragment.this)
-                        .navigate(R.id.action_splashFragment2_to_loginFragment);
+                SessionManager sessionManager =
+                        new SessionManager(requireContext());
+
+                if (sessionManager.isLoggedIn()) {
+
+                    NavHostFragment.findNavController(SplashFragment.this)
+                            .navigate(R.id.action_splashFragment2_to_homeFragment);
+
+                } else {
+
+                    NavHostFragment.findNavController(SplashFragment.this)
+                            .navigate(R.id.action_splashFragment2_to_loginFragment);
+                }
+                Log.d("SplashDebug", "isLoggedIn = " + sessionManager.isLoggedIn());
             }
         });
     }

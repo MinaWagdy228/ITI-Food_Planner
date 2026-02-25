@@ -1,7 +1,6 @@
 package com.example.foodplanner.presentation.login;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,20 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.foodplanner.R;
 import com.example.foodplanner.databinding.FragmentLoginBinding;
 
-public class LoginFragment extends Fragment {
+import java.util.Objects;
+
+public class LoginFragment extends Fragment implements ViewLogin {
 
     private FragmentLoginBinding binding;
+    private LoginPresenter presenter;
 
     public LoginFragment() {
+        super(R.layout.fragment_login);
     }
 
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -34,38 +36,49 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Login button click
-        binding.btnLogin.setOnClickListener(v -> handleLogin());
+        presenter = new LoginPresenterImp(this, requireContext());
 
-//         Navigate to Register screen
+        binding.btnLogin.setOnClickListener(v -> {
+            presenter.login(
+                    Objects.requireNonNull(binding.etEmail.getText()).toString().trim(),
+                    Objects.requireNonNull(binding.etPassword.getText()).toString().trim()
+            );
+        });
+
+        // Navigate to Register screen
         binding.tvRegister.setOnClickListener(v -> {
-            NavHostFragment.findNavController(LoginFragment.this)
+            NavHostFragment.findNavController(this)
                     .navigate(R.id.action_loginFragment_to_registerFragment);
-///            Meal smallMeal = new Meal(50, "Small Meal");
-///            LoginFragmentDirections.ActionLoginFragmentToRegisterFragment action =
-///                    LoginFragmentDirections.actionLoginFragmentToRegisterFragment(smallMeal);
-///            NavHostFragment.findNavController(LoginFragment.this)
-///                    .navigate(action);
         });
     }
 
-    private void handleLogin() {
-        String email = binding.etEmail.getText().toString().trim();
-        String password = binding.etPassword.getText().toString().trim();
-
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-//         Navigate to Home using Navigation Component
-        NavHostFragment.findNavController(LoginFragment.this)
+    @Override
+    public void onLoginSuccess() {
+        NavHostFragment.findNavController(this)
                 .navigate(R.id.action_loginFragment_to_homeFragment);
+    }
+
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void hideLoading() {
+
+    }
+
+    @Override
+    public void showError(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
         binding = null;
     }
 }
