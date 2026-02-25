@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.ItemMealBinding;
+import com.example.foodplanner.presentation.common.OnMealClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,11 @@ import java.util.List;
 public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.MealViewHolder> {
 
     private List<Meal> meals = new ArrayList<>();
+    private final OnMealClickListener onMealClickListener;
+
+    public MealsAdapter(OnMealClickListener onMealClickListener) {
+        this.onMealClickListener = onMealClickListener;
+    }
 
     public void setMeals(List<Meal> meals) {
         this.meals = meals;
@@ -41,6 +47,12 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.MealViewHold
         Glide.with(holder.itemView.getContext())
                 .load(meal.getStrMealThumb())
                 .into(holder.binding.imgMeal);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onMealClickListener != null) {
+                onMealClickListener.onMealClick(meal);
+            }
+        });
     }
 
     @Override

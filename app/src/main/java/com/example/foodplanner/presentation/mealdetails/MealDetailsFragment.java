@@ -47,7 +47,7 @@ public class MealDetailsFragment extends Fragment
 
         setupRecyclerView();
 
-        presenter = new PresenterImp(this);
+        presenter = new PresenterImp(this, requireContext());
         presenter.getMealDetails(mealId);
     }
 

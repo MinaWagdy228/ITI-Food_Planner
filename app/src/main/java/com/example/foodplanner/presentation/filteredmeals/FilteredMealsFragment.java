@@ -14,10 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.foodplanner.databinding.FragmentFilteredMealsBinding;
 import com.example.foodplanner.data.model.Meal;
+import com.example.foodplanner.presentation.common.OnMealClickListener;
 
 import java.util.List;
 
-public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal {
+public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal, OnMealClickListener {
 
     private FragmentFilteredMealsBinding binding;
     private Presenter presenter;
@@ -50,7 +51,7 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal 
     }
 
     private void setupRecyclerView() {
-        mealsAdapter = new MealsAdapter();
+        mealsAdapter = new MealsAdapter(this);
 
         binding.rvMeals.setAdapter(mealsAdapter);
         binding.rvMeals.setLayoutManager(
@@ -86,5 +87,14 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal 
         super.onDestroyView();
         presenter.onDestroy();
         binding = null;
+    }
+
+    @Override
+    public void onMealClick(Meal meal) {
+        FilteredMealsFragmentDirections.ActionFilteredMealsFragmentToMealDetailsFragment action =
+                FilteredMealsFragmentDirections
+                        .actionFilteredMealsFragmentToMealDetailsFragment(meal.getIdMeal());
+
+        NavHostFragment.findNavController(this).navigate(action);
     }
 }
