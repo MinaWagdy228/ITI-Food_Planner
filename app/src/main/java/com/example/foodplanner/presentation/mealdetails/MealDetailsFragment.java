@@ -66,10 +66,10 @@ public class MealDetailsFragment extends Fragment
     private List<DetailItem> buildDetailItems(Meal meal) {
         List<DetailItem> items = new ArrayList<>();
 
-        // 1️⃣ Header (Image + Title + Favorite Icon)
+        // Header (Image + Title + Favorite Icon)
         items.add(new DetailItem(DetailItem.TYPE_HEADER, meal));
 
-        // 2️⃣ Ingredients (Dynamic extraction 1–20)
+        //  Ingredients (Dynamic extraction 1–20)
         addIngredient(items, meal.getStrIngredient1());
         addIngredient(items, meal.getStrIngredient2());
         addIngredient(items, meal.getStrIngredient3());
@@ -91,7 +91,7 @@ public class MealDetailsFragment extends Fragment
         addIngredient(items, meal.getStrIngredient19());
         addIngredient(items, meal.getStrIngredient20());
 
-        // 3️⃣ Instructions Section
+        // Instructions Section
         if (!TextUtils.isEmpty(meal.getStrInstructions())) {
             items.add(new DetailItem(
                     DetailItem.TYPE_INSTRUCTIONS,
@@ -99,7 +99,7 @@ public class MealDetailsFragment extends Fragment
             ));
         }
 
-        // 4️⃣ YouTube Section (Embedded Player)
+        // YouTube Section (Embedded Player)
         if (!TextUtils.isEmpty(meal.getStrYoutube())) {
             items.add(new DetailItem(
                     DetailItem.TYPE_YOUTUBE,
@@ -116,7 +116,7 @@ public class MealDetailsFragment extends Fragment
         }
     }
 
-    // ⭐ Favorite Click → UI → Presenter (as you requested)
+    // Favorite Click → UI → Presenter
     @Override
     public void onFavoriteClicked(Meal meal) {
         presenter.onFavoriteClicked(meal);
@@ -124,17 +124,17 @@ public class MealDetailsFragment extends Fragment
 
     @Override
     public void showError(String message) {
-        // You can add Snackbar later
+
     }
 
     @Override
     public void showLoading() {
-        // Optional: ProgressBar
+
     }
 
     @Override
     public void hideLoading() {
-        // Optional
+
     }
 
     @Override

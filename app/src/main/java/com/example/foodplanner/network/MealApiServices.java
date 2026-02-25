@@ -3,6 +3,7 @@ package com.example.foodplanner.network;
 import com.example.foodplanner.data.model.CategoriesResponse;
 import com.example.foodplanner.data.model.MealsResponse;
 
+import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -41,4 +42,5 @@ public interface MealApiServices {
 
     @GET("list.php?i=list")
     Single<CategoriesResponse> getIngredientList();
+
 }
