@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface UserDao {
@@ -17,4 +18,10 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
     Maybe<UserEntity> getUserByEmail(String email);
+
+    @Query("SELECT * FROM users WHERE id = :id")
+    Single<UserEntity> getUserById(int id);
+
+    @Query("DELETE FROM users WHERE id = :id")
+    void deleteUserById(int id);
 }

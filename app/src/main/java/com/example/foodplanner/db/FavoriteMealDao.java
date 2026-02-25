@@ -25,4 +25,6 @@ public interface FavoriteMealDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_meals WHERE idMeal = :mealId AND userId = :userId)")
     Flowable<Boolean> isFavorite(String mealId, int userId);
+    @Query("DELETE FROM favorite_meals WHERE userId = :userId")
+    void deleteFavoritesByUser(int userId);
 }

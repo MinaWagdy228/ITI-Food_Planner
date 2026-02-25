@@ -61,6 +61,11 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.MealViewHold
         return meals.size();
     }
 
+    public void submitList(List<Meal> meals) {
+        this.meals = meals;
+        notifyDataSetChanged();
+    }
+
     static class MealViewHolder extends RecyclerView.ViewHolder {
         ItemMealBinding binding;
 

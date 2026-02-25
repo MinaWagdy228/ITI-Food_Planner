@@ -27,6 +27,8 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
     private Presenter presenter;
     private CategoriesAdapter categoriesAdapter;
 
+    private Meal randomMeal;
+
     public HomeFragment() {
         // Required empty constructor
     }
@@ -66,16 +68,25 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
     @Override
     public void showRandomMeal(Meal meal) {
+        this.randomMeal = meal;
+
         binding.tvMealName.setText(meal.getStrMeal());
 
         Glide.with(requireContext())
                 .load(meal.getStrMealThumb())
                 .into(binding.imgMeal);
 
-        // Stop refreshing animation
-        if (binding.swipeRefresh.isRefreshing()) {
-            binding.swipeRefresh.setRefreshing(false);
-        }
+        binding.cardMealOfDay.setOnClickListener(v -> {
+            if (randomMeal != null && randomMeal.getIdMeal() != null) {
+
+                HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                        HomeFragmentDirections
+                                .actionHomeFragmentToMealDetailsFragment(randomMeal.getIdMeal());
+
+                NavHostFragment.findNavController(HomeFragment.this)
+                        .navigate(action);
+            }
+        });
     }
 
     @Override
