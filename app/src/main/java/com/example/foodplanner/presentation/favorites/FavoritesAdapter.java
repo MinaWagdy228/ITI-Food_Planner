@@ -10,15 +10,24 @@ import com.bumptech.glide.Glide;
 import com.example.foodplanner.databinding.ItemFavoriteMealBinding;
 import com.example.foodplanner.db.FavoriteMealEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder> {
 
-    private List<FavoriteMealEntity> list = new ArrayList<>();
+    public interface OnFavoriteMealClick {
+        void onMealClick(FavoriteMealEntity meal);
+    }
 
-    public void setList(List<FavoriteMealEntity> list) {
+    private List<FavoriteMealEntity> list;
+    private final OnFavoriteMealClick listener;
+
+    public FavoritesAdapter(List<FavoriteMealEntity> list, OnFavoriteMealClick listener) {
         this.list = list;
+        this.listener = listener;
+    }
+
+    public void setList(List<FavoriteMealEntity> newList) {
+        this.list = newList;
         notifyDataSetChanged();
     }
 
@@ -26,7 +35,10 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemFavoriteMealBinding binding = ItemFavoriteMealBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent, false);
+                LayoutInflater.from(parent.getContext()),
+                parent,
+                false
+        );
         return new ViewHolder(binding);
     }
 
@@ -39,11 +51,13 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         Glide.with(holder.itemView.getContext())
                 .load(meal.getStrMealThumb())
                 .into(holder.binding.imgMeal);
+
+        holder.itemView.setOnClickListener(v -> listener.onMealClick(meal));
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list == null ? 0 : list.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
