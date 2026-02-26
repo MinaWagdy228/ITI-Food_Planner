@@ -42,10 +42,11 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
         setupRecycler();
 
         presenter = new SearchPresenterImp(this, requireContext());
-        presenter.loadAllMeals(); // 🔥 default load
+        presenter.loadAllMeals(); // Load meals by default
 
         setupSearchListener();
         setupFilterButton();
+        setupSearchFocusListener();
     }
 
     @Override
@@ -59,6 +60,20 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
                 presenter.loadAllMeals();
             }
         }
+    }
+
+    // ...existing code...
+
+    private void setupSearchFocusListener() {
+        binding.etSearch.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && currentSearchQuery.isEmpty()) {
+                // Search bar focused and empty - show initial search state
+                showInitialSearchState();
+            } else if (!hasFocus && currentSearchQuery.isEmpty()) {
+                // Search bar unfocused and empty - reload meals
+                presenter.loadAllMeals();
+            }
+        });
     }
 
     private void setupRecycler() {
@@ -93,14 +108,28 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
 
     @Override
     public void showMeals(List<Meal> meals) {
+        binding.initialSearchState.setVisibility(View.GONE);
         binding.tvEmpty.setVisibility(View.GONE);
+        binding.rvSearch.setVisibility(View.VISIBLE);
         adapter.submitList(meals);
     }
 
     @Override
     public void showEmptyState() {
+        binding.initialSearchState.setVisibility(View.GONE);
+        binding.rvSearch.setVisibility(View.GONE);
         binding.tvEmpty.setVisibility(View.VISIBLE);
         adapter.submitList(new ArrayList<>());
+    }
+
+    private void showInitialSearchState() {
+        if (binding != null) {
+            binding.initialSearchState.setVisibility(View.VISIBLE);
+            binding.rvSearch.setVisibility(View.GONE);
+            binding.tvEmpty.setVisibility(View.GONE);
+            binding.loadingCard.setVisibility(View.GONE);
+            adapter.submitList(new ArrayList<>());
+        }
     }
 
     @Override
@@ -115,6 +144,7 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
     @Override
     public void showLoading() {
         if (binding != null && binding.loadingCard != null) {
+            binding.initialSearchState.setVisibility(View.GONE);
             binding.loadingCard.setVisibility(View.VISIBLE);
             binding.rvSearch.setVisibility(View.GONE);
             binding.tvEmpty.setVisibility(View.GONE);
