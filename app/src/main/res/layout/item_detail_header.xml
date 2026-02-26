@@ -3,10 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="280dp"
+    android:layout_height="320dp"
     android:layout_marginBottom="20dp"
-    app:cardCornerRadius="24dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    app:cardCornerRadius="28dp"
     app:cardElevation="8dp"
+    android:backgroundTint="@color/surface"
     app:cardUseCompatPadding="true">
 
     <FrameLayout
@@ -18,27 +21,29 @@
             android:id="@+id/imgMealHeader"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:contentDescription="Meal image"/>
 
-        <!-- Gradient Overlay (for cohesive readability) -->
+        <!-- Gradient Overlay -->
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#55000000"/>
+            android:background="@drawable/gradient_overlay"/>
 
         <!-- Favorite Icon (Top Right) -->
         <ImageView
             android:id="@+id/imgFavorite"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_margin="16dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="20dp"
             android:layout_gravity="top|end"
             android:background="@drawable/bg_favorite_circle"
-            android:padding="6dp"
+            android:padding="10dp"
             android:src="@drawable/ic_favorite_border"
             android:clickable="true"
             android:focusable="true"
-            app:tint="@android:color/white" />
+            android:contentDescription="Add to favorites"
+            app:tint="@color/white" />
 
         <!-- Meal Title -->
         <TextView
@@ -46,13 +51,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Meal Title"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
+            android:textSize="28sp"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/white"
             android:layout_gravity="bottom|start"
-            android:padding="20dp"
+            android:padding="24dp"
             android:maxLines="2"
-            android:ellipsize="end"/>
+            android:ellipsize="end"
+            android:shadowColor="@color/scrim"
+            android:shadowDx="0"
+            android:shadowDy="2"
+            android:shadowRadius="8"/>
 
     </FrameLayout>
 

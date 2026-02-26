@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -28,6 +29,10 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
     private CategoriesAdapter categoriesAdapter;
 
     private Meal randomMeal;
+
+    // For double back press to exit
+    private long backPressedTime;
+    private Toast backToast;
 
     public HomeFragment() {
         // Required empty constructor
@@ -54,6 +59,28 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
             presenter.getRandomMeal();
             presenter.getCategories();
         });
+
+        // Handle back press - exit app on double back
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+                getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+                            if (backToast != null) {
+                                backToast.cancel();
+                            }
+                            requireActivity().finish();
+                        } else {
+                            backToast = Toast.makeText(requireContext(),
+                                    "Press back again to exit",
+                                    Toast.LENGTH_SHORT);
+                            backToast.show();
+                        }
+                        backPressedTime = System.currentTimeMillis();
+                    }
+                }
+        );
     }
 
     @Override

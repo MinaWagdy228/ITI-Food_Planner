@@ -46,6 +46,12 @@ public class RegisterFragment extends Fragment implements ViewRegister {
                     Objects.requireNonNull(binding.etConfirmPassword.getText()).toString().trim()
             );
         });
+
+        // Add click listener for "Already have an account? Login" text
+        binding.tvBackToLogin.setOnClickListener(v -> {
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_registerFragment_to_loginFragment);
+        });
     }
 
     @Override
