@@ -63,12 +63,16 @@ public class RegisterFragment extends Fragment implements ViewRegister {
 
     @Override
     public void showLoading() {
-
+        if (binding != null && binding.loadingOverlay != null) {
+            binding.loadingOverlay.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
-
+        if (binding != null && binding.loadingOverlay != null) {
+            binding.loadingOverlay.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -124,17 +124,27 @@ public class MealDetailsFragment extends Fragment
 
     @Override
     public void showError(String message) {
-
+        if (binding != null) {
+            android.widget.Toast.makeText(requireContext(),
+                "Error: " + message,
+                android.widget.Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void showLoading() {
-
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(android.view.View.VISIBLE);
+            binding.rvMealDetails.setVisibility(android.view.View.GONE);
+        }
     }
 
     @Override
     public void hideLoading() {
-
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(android.view.View.GONE);
+            binding.rvMealDetails.setVisibility(android.view.View.VISIBLE);
+        }
     }
 
     @Override

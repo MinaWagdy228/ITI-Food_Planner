@@ -69,21 +69,45 @@ public class FavouriteFragment extends Fragment implements ViewFavourite {
 
     @Override
     public void showFavorites(List<FavoriteMealEntity> meals) {
-        binding.tvEmpty.setVisibility(View.GONE);
-        binding.rvFavorites.setVisibility(View.VISIBLE);
-        adapter.setList(meals);
+        if (binding != null) {
+            binding.loadingCard.setVisibility(View.GONE);
+            binding.tvEmpty.setVisibility(View.GONE);
+            binding.rvFavorites.setVisibility(View.VISIBLE);
+            adapter.setList(meals);
+        }
     }
 
 
     @Override
     public void showEmptyState() {
-        binding.rvFavorites.setVisibility(View.GONE);
-        binding.tvEmpty.setVisibility(View.VISIBLE);
+        if (binding != null) {
+            binding.loadingCard.setVisibility(View.GONE);
+            binding.rvFavorites.setVisibility(View.GONE);
+            binding.tvEmpty.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void showLoading() {
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.VISIBLE);
+            binding.rvFavorites.setVisibility(View.GONE);
+            binding.tvEmpty.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void hideLoading() {
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void showError(String message) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        if (binding != null) {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

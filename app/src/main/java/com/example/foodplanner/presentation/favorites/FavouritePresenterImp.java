@@ -34,18 +34,24 @@ public class FavouritePresenterImp implements FavouritePresenter {
 
         int userId = sessionManager.getUserId();
 
+        view.showLoading();
+
         compositeDisposable.add(
                 localDataSource.getFavoritesByUser(userId)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
                                 this::handleFavorites,
-                                throwable -> view.showError("Failed to load favorites")
+                                throwable -> {
+                                    view.hideLoading();
+                                    view.showError("Failed to load favorites");
+                                }
                         )
         );
     }
 
     private void handleFavorites(List<FavoriteMealEntity> favorites) {
+        view.hideLoading();
         if (favorites == null || favorites.isEmpty()) {
             view.showEmptyState();
         } else {

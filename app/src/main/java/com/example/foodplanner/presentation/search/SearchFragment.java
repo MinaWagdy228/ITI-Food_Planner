@@ -88,13 +88,27 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
 
     @Override
     public void showLoading() {
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.VISIBLE);
+            binding.rvSearch.setVisibility(View.GONE);
+            binding.tvEmpty.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void hideLoading() {
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.GONE);
+            binding.rvSearch.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void showError(String message) {
+        if (binding != null) {
+            android.widget.Toast.makeText(requireContext(),
+                "Error: " + message,
+                android.widget.Toast.LENGTH_SHORT).show();
+        }
     }
 }

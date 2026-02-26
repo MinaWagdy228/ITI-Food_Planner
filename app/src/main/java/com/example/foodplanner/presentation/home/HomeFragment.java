@@ -128,12 +128,16 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
     @Override
     public void showLoading() {
-        // Optional: show ProgressBar here
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
-        // Optional: hide ProgressBar later
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.GONE);
+        }
     }
 
     private void setupCategoriesRecycler() {

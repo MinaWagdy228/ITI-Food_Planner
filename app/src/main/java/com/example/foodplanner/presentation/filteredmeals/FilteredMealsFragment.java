@@ -74,12 +74,18 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
 
     @Override
     public void showLoading() {
-        // Optional: add progress bar later
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.VISIBLE);
+            binding.rvMeals.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void hideLoading() {
-        // Optional
+        if (binding != null && binding.loadingCard != null) {
+            binding.loadingCard.setVisibility(View.GONE);
+            binding.rvMeals.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

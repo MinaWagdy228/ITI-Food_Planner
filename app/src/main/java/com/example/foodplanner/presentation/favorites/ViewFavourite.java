@@ -8,4 +8,6 @@ public interface ViewFavourite {
     void showFavorites(List<FavoriteMealEntity> meals);
     void showEmptyState();
     void showError(String message);
+    void showLoading();
+    void hideLoading();
 }

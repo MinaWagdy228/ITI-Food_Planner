@@ -60,12 +60,16 @@ public class LoginFragment extends Fragment implements ViewLogin {
 
     @Override
     public void showLoading() {
-
+        if (binding != null && binding.loadingOverlay != null) {
+            binding.loadingOverlay.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void hideLoading() {
-
+        if (binding != null && binding.loadingOverlay != null) {
+            binding.loadingOverlay.setVisibility(View.GONE);
+        }
     }
 
     @Override
