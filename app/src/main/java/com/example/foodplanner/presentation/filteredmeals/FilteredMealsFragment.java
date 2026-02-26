@@ -15,10 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.foodplanner.databinding.FragmentFilteredMealsBinding;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.presentation.common.OnMealClickListener;
+import com.example.foodplanner.presentation.mealdetails.OnFavoriteClickListener;
 
 import java.util.List;
 
-public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal, OnMealClickListener {
+public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal, OnMealClickListener, OnFavoriteClickListener {
 
     private FragmentFilteredMealsBinding binding;
     private Presenter presenter;
@@ -40,7 +41,7 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
     @Override
     public void onViewCreated(@NonNull android.view.View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        presenter = new PresenterImp(this);
+        presenter = new PresenterImp(this, requireContext());
         FilteredMealsFragmentArgs args =
                 FilteredMealsFragmentArgs.fromBundle(getArguments());
         filterValue = args.getFilterValue();
@@ -90,7 +91,7 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
     }
 
     private void setupRecyclerView() {
-        mealsAdapter = new MealsAdapter(this);
+        mealsAdapter = new MealsAdapter(this, this);
 
         binding.rvMeals.setAdapter(mealsAdapter);
         binding.rvMeals.setLayoutManager(
@@ -139,4 +140,10 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
 
         NavHostFragment.findNavController(this).navigate(action);
     }
+
+    @Override
+    public void onFavoriteClicked(Meal meal) {
+        presenter.onFavoriteClicked(meal);
+    }
 }
+

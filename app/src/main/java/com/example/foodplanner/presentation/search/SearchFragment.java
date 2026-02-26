@@ -18,11 +18,12 @@ import com.example.foodplanner.databinding.FragmentSearchBinding;
 import com.example.foodplanner.presentation.common.OnMealClickListener;
 import com.example.foodplanner.presentation.filteredmeals.MealsAdapter;
 import com.example.foodplanner.presentation.home.FilterBottomSheetDialog;
+import com.example.foodplanner.presentation.mealdetails.OnFavoriteClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFragment extends Fragment implements ViewSearch, OnMealClickListener {
+public class SearchFragment extends Fragment implements ViewSearch, OnMealClickListener, OnFavoriteClickListener {
 
     private FragmentSearchBinding binding;
     private SearchPresenter presenter;
@@ -40,7 +41,7 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         setupRecycler();
 
-        presenter = new SearchPresenterImp(this);
+        presenter = new SearchPresenterImp(this, requireContext());
         presenter.loadAllMeals(); // 🔥 default load
 
         setupSearchListener();
@@ -61,7 +62,7 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
     }
 
     private void setupRecycler() {
-        adapter = new MealsAdapter(this);
+        adapter = new MealsAdapter(this, this);
         binding.rvSearch.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvSearch.setAdapter(adapter);
     }
@@ -145,4 +146,10 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
         }
         binding = null;
     }
+
+    @Override
+    public void onFavoriteClicked(Meal meal) {
+        presenter.onFavoriteClicked(meal);
+    }
 }
+

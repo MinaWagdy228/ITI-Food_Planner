@@ -18,12 +18,18 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         void onMealClick(FavoriteMealEntity meal);
     }
 
-    private List<FavoriteMealEntity> list;
-    private final OnFavoriteMealClick listener;
+    public interface OnFavoriteRemove {
+        void onRemoveFavorite(FavoriteMealEntity meal);
+    }
 
-    public FavoritesAdapter(List<FavoriteMealEntity> list, OnFavoriteMealClick listener) {
+    private List<FavoriteMealEntity> list;
+    private final OnFavoriteMealClick clickListener;
+    private final OnFavoriteRemove removeListener;
+
+    public FavoritesAdapter(List<FavoriteMealEntity> list, OnFavoriteMealClick clickListener, OnFavoriteRemove removeListener) {
         this.list = list;
-        this.listener = listener;
+        this.clickListener = clickListener;
+        this.removeListener = removeListener;
     }
 
     public void setList(List<FavoriteMealEntity> newList) {
@@ -54,7 +60,20 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
                 .error(android.R.color.transparent)
                 .into(holder.binding.imgMeal);
 
-        holder.itemView.setOnClickListener(v -> listener.onMealClick(meal));
+        // Favorite icon is always filled red (these are favorites)
+        // Clicking removes from favorites
+        holder.binding.imgFavorite.setOnClickListener(v -> {
+            if (removeListener != null) {
+                removeListener.onRemoveFavorite(meal);
+            }
+        });
+
+        // Meal item click
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onMealClick(meal);
+            }
+        });
     }
 
     @Override

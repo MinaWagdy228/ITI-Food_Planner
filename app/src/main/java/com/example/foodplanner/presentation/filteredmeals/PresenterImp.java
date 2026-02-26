@@ -1,7 +1,13 @@
 package com.example.foodplanner.presentation.filteredmeals;
 
+import android.content.Context;
+
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.data.model.MealsResponse;
+import com.example.foodplanner.data.model.dataSource.local.FavoriteLocalDataSource;
+import com.example.foodplanner.data.model.dataSource.local.SessionManager;
+import com.example.foodplanner.data.model.mapper.FavoriteMapper;
+import com.example.foodplanner.db.AppDatabase;
 import com.example.foodplanner.network.Network;
 
 import java.util.List;
@@ -14,14 +20,22 @@ public class PresenterImp implements Presenter {
     private ViewFilteredMeal viewFilteredMeal;
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final FavoriteLocalDataSource localDataSource;
+    private final SessionManager sessionManager;
+    private final int currentUserId;
 
     // Cache to avoid redundant network calls
     private String lastFilterValue = null;
     private String lastFilterType = null;
     private List<Meal> cachedMeals = null;
 
-    public PresenterImp(ViewFilteredMeal viewFilteredMeal) {
+    public PresenterImp(ViewFilteredMeal viewFilteredMeal, Context context) {
         this.viewFilteredMeal = viewFilteredMeal;
+
+        AppDatabase db = AppDatabase.getInstance(context);
+        this.localDataSource = new FavoriteLocalDataSource(db.favoriteMealDao());
+        this.sessionManager = new SessionManager(context);
+        this.currentUserId = sessionManager.getUserId();
     }
 
     @Override
@@ -98,6 +112,44 @@ public class PresenterImp implements Presenter {
             viewFilteredMeal.hideLoading();
             viewFilteredMeal.showError(throwable.getMessage());
         }
+    }
+
+    @Override
+    public void onFavoriteClicked(Meal meal) {
+        boolean newState = !meal.isFavorite();
+        meal.setFavorite(newState);
+
+        compositeDisposable.add(
+                io.reactivex.rxjava3.core.Completable.fromAction(() -> {
+                            if (newState) {
+                                localDataSource.insertFavorite(
+                                        FavoriteMapper.toEntity(meal, currentUserId)
+                                );
+                            } else {
+                                localDataSource.deleteFavorite(
+                                        meal.getIdMeal(),
+                                        currentUserId
+                                );
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> {
+                                    // Update cached meal if it exists
+                                    if (cachedMeals != null) {
+                                        for (Meal cachedMeal : cachedMeals) {
+                                            if (cachedMeal.getIdMeal().equals(meal.getIdMeal())) {
+                                                cachedMeal.setFavorite(newState);
+                                                break;
+                                            }
+                                        }
+                                        viewFilteredMeal.showMeals(cachedMeals);
+                                    }
+                                },
+                                error -> viewFilteredMeal.showError(error.getMessage())
+                        )
+        );
     }
 
     @Override

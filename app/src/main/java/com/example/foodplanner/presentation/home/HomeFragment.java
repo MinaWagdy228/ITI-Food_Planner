@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
     private void setupSearchSuggestions() {
         // Initialize search presenter
-        searchPresenter = new SearchPresenterImp(this);
+        searchPresenter = new SearchPresenterImp(this, requireContext());
 
         // Setup suggestions RecyclerView
         searchSuggestionsAdapter = new MealsAdapter(this);

@@ -46,13 +46,21 @@ public class FavouriteFragment extends Fragment implements ViewFavourite {
     }
 
     private void setupRecycler() {
-        adapter = new FavoritesAdapter(new ArrayList<>(), mealEntity -> {
-            FavouriteFragmentDirections.ActionFavouriteFragmentToMealDetailsFragment action =
-                    FavouriteFragmentDirections
-                            .actionFavouriteFragmentToMealDetailsFragment(mealEntity.getIdMeal());
+        adapter = new FavoritesAdapter(
+                new ArrayList<>(),
+                // On meal click - navigate to details
+                mealEntity -> {
+                    FavouriteFragmentDirections.ActionFavouriteFragmentToMealDetailsFragment action =
+                            FavouriteFragmentDirections
+                                    .actionFavouriteFragmentToMealDetailsFragment(mealEntity.getIdMeal());
 
-            NavHostFragment.findNavController(this).navigate(action);
-        });
+                    NavHostFragment.findNavController(this).navigate(action);
+                },
+                // On remove favorite - delete from database
+                mealEntity -> {
+                    presenter.removeFavorite(mealEntity);
+                }
+        );
 
         binding.rvFavorites.setLayoutManager(
                 new LinearLayoutManager(requireContext())

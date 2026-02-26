@@ -3,21 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/outline_variant"
     android:backgroundTint="@color/surface">
 
-    <TextView
-        android:id="@+id/tvIngredient"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="• Ingredient"
-        android:textSize="16sp"
-        android:fontFamily="sans-serif"
-        android:textColor="@color/text_primary"
-        android:padding="16dp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:background="@drawable/bg_gradient">
+
+        <!-- Modern Dot Indicator -->
+        <View
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:background="@drawable/bg_card_rounded"
+            android:backgroundTint="@color/primary" />
+
+        <!-- Measure Section -->
+        <TextView
+            android:id="@+id/tvMeasure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.35"
+            android:layout_marginStart="14dp"
+            android:text="2 cups"
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.01" />
+
+        <!-- Separator -->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="@color/outline_variant"
+            android:alpha="0.5" />
+
+        <!-- Ingredient Name -->
+        <TextView
+            android:id="@+id/tvIngredient"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.65"
+            android:text="Rice"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0.005"
+            android:ellipsize="end"
+            android:maxLines="1" />
+
+    </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>
 

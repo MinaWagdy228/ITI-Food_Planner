@@ -7,9 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.foodplanner.R;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.ItemMealBinding;
 import com.example.foodplanner.presentation.common.OnMealClickListener;
+import com.example.foodplanner.presentation.mealdetails.OnFavoriteClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +20,15 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.MealViewHold
 
     private List<Meal> meals = new ArrayList<>();
     private final OnMealClickListener onMealClickListener;
+    private final OnFavoriteClickListener onFavoriteClickListener;
 
     public MealsAdapter(OnMealClickListener onMealClickListener) {
+        this(onMealClickListener, null);
+    }
+
+    public MealsAdapter(OnMealClickListener onMealClickListener, OnFavoriteClickListener onFavoriteClickListener) {
         this.onMealClickListener = onMealClickListener;
+        this.onFavoriteClickListener = onFavoriteClickListener;
     }
 
     public void setMeals(List<Meal> meals) {
@@ -51,6 +59,27 @@ public class MealsAdapter extends RecyclerView.Adapter<MealsAdapter.MealViewHold
                 .error(android.R.color.transparent)
                 .into(holder.binding.imgMeal);
 
+        // Set favorite icon state
+        if (meal.isFavorite()) {
+            holder.binding.imgFavorite.setImageResource(R.drawable.ic_favorite_filled);
+            holder.binding.imgFavorite.setColorFilter(
+                    holder.itemView.getContext().getColor(android.R.color.holo_red_light)
+            );
+        } else {
+            holder.binding.imgFavorite.setImageResource(R.drawable.ic_favorite_border);
+            holder.binding.imgFavorite.setColorFilter(
+                    holder.itemView.getContext().getColor(android.R.color.white)
+            );
+        }
+
+        // Favorite icon click
+        holder.binding.imgFavorite.setOnClickListener(v -> {
+            if (onFavoriteClickListener != null) {
+                onFavoriteClickListener.onFavoriteClicked(meal);
+            }
+        });
+
+        // Meal item click
         holder.itemView.setOnClickListener(v -> {
             if (onMealClickListener != null) {
                 onMealClickListener.onMealClick(meal);

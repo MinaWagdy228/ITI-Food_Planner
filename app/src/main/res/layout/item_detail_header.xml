@@ -3,14 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="320dp"
-    android:layout_marginBottom="20dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    app:cardCornerRadius="28dp"
-    app:cardElevation="8dp"
+    android:layout_height="340dp"
+    android:layout_marginBottom="24dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp"
     android:backgroundTint="@color/surface"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="false">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -33,12 +35,12 @@
         <!-- Favorite Icon (Top Right) -->
         <ImageView
             android:id="@+id/imgFavorite"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_margin="20dp"
             android:layout_gravity="top|end"
             android:background="@drawable/bg_favorite_circle"
-            android:padding="10dp"
+            android:padding="12dp"
             android:src="@drawable/ic_favorite_border"
             android:clickable="true"
             android:focusable="true"
@@ -48,20 +50,25 @@
         <!-- Meal Title -->
         <TextView
             android:id="@+id/tvMealTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Meal Title"
-            android:textSize="28sp"
+            android:textSize="32sp"
             android:fontFamily="sans-serif-black"
             android:textColor="@color/white"
             android:layout_gravity="bottom|start"
-            android:padding="24dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="24dp"
+            android:paddingTop="16dp"
             android:maxLines="2"
             android:ellipsize="end"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="2dp"
             android:shadowColor="@color/scrim"
             android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="8"/>
+            android:shadowDy="3"
+            android:shadowRadius="12"/>
 
     </FrameLayout>
 

@@ -1,6 +1,12 @@
 package com.example.foodplanner.presentation.search;
 
+import android.content.Context;
+
 import com.example.foodplanner.data.model.Meal;
+import com.example.foodplanner.data.model.dataSource.local.FavoriteLocalDataSource;
+import com.example.foodplanner.data.model.dataSource.local.SessionManager;
+import com.example.foodplanner.data.model.mapper.FavoriteMapper;
+import com.example.foodplanner.db.AppDatabase;
 import com.example.foodplanner.network.MealApiServices;
 import com.example.foodplanner.network.Network;
 
@@ -16,16 +22,24 @@ public class SearchPresenterImp implements SearchPresenter {
     private final ViewSearch view;
     private final MealApiServices api;
     private final CompositeDisposable compositeDisposable;
+    private final FavoriteLocalDataSource localDataSource;
+    private final SessionManager sessionManager;
+    private final int currentUserId;
 
     // Cache for search results
     private List<Meal> cachedAllMeals = null;
     private String lastSearchQuery = null;
     private List<Meal> lastSearchResults = null;
 
-    public SearchPresenterImp(ViewSearch view) {
+    public SearchPresenterImp(ViewSearch view, Context context) {
         this.view = view;
         this.api = Network.getApiService();
         this.compositeDisposable = new CompositeDisposable();
+
+        AppDatabase db = AppDatabase.getInstance(context);
+        this.localDataSource = new FavoriteLocalDataSource(db.favoriteMealDao());
+        this.sessionManager = new SessionManager(context);
+        this.currentUserId = sessionManager.getUserId();
     }
 
     @Override
@@ -91,6 +105,55 @@ public class SearchPresenterImp implements SearchPresenter {
                             }
                         }, throwable -> view.showError("Search failed"))
         );
+    }
+
+    @Override
+    public void onFavoriteClicked(Meal meal) {
+        boolean newState = !meal.isFavorite();
+        meal.setFavorite(newState);
+
+        compositeDisposable.add(
+                io.reactivex.rxjava3.core.Completable.fromAction(() -> {
+                            if (newState) {
+                                localDataSource.insertFavorite(
+                                        FavoriteMapper.toEntity(meal, currentUserId)
+                                );
+                            } else {
+                                localDataSource.deleteFavorite(
+                                        meal.getIdMeal(),
+                                        currentUserId
+                                );
+                            }
+                        })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                () -> {
+                                    // Update cached meals if they exist
+                                    if (cachedAllMeals != null) {
+                                        updateMealInCache(cachedAllMeals, meal.getIdMeal(), newState);
+                                    }
+                                    if (lastSearchResults != null) {
+                                        updateMealInCache(lastSearchResults, meal.getIdMeal(), newState);
+                                        view.showMeals(lastSearchResults);
+                                    } else if (cachedAllMeals != null) {
+                                        view.showMeals(cachedAllMeals);
+                                    }
+                                },
+                                error -> {
+                                    // Optionally handle error
+                                }
+                        )
+        );
+    }
+
+    private void updateMealInCache(List<Meal> meals, String mealId, boolean favorite) {
+        for (Meal cachedMeal : meals) {
+            if (cachedMeal.getIdMeal().equals(mealId)) {
+                cachedMeal.setFavorite(favorite);
+                break;
+            }
+        }
     }
 
     @Override

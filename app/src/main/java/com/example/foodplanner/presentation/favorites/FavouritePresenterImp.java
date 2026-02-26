@@ -60,6 +60,26 @@ public class FavouritePresenterImp implements FavouritePresenter {
     }
 
     @Override
+    public void removeFavorite(FavoriteMealEntity meal) {
+        int userId = sessionManager.getUserId();
+
+        compositeDisposable.add(
+                io.reactivex.rxjava3.core.Completable.fromAction(() -> {
+                    localDataSource.deleteFavorite(meal.getIdMeal(), userId);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> {
+                            // Reload favorites after removal
+                            loadFavorites();
+                        },
+                        error -> view.showError("Failed to remove favorite")
+                )
+        );
+    }
+
+    @Override
     public void onDestroy() {
         compositeDisposable.clear();
     }

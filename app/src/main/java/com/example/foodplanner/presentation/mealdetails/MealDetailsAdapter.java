@@ -91,7 +91,7 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
 
             case DetailItem.TYPE_INGREDIENT:
-                bindIngredient((IngredientViewHolder) holder, (String) item.getData());
+                bindIngredient((IngredientViewHolder) holder, (Ingredient) item.getData());
                 break;
 
             case DetailItem.TYPE_INSTRUCTIONS:
@@ -140,8 +140,9 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.binding.tvSectionTitle.setText(title);
     }
 
-    private void bindIngredient(IngredientViewHolder holder, String ingredient) {
-        holder.binding.tvIngredient.setText("• " + ingredient);
+    private void bindIngredient(IngredientViewHolder holder, Ingredient ingredient) {
+        holder.binding.tvMeasure.setText(ingredient.getMeasure());
+        holder.binding.tvIngredient.setText(ingredient.getName());
     }
 
     private void bindInstructions(InstructionsViewHolder holder, String instructions) {

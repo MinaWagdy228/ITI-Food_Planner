@@ -16,6 +16,7 @@ import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.BottomSheetSearchBinding;
 import com.example.foodplanner.presentation.common.OnMealClickListener;
 import com.example.foodplanner.presentation.filteredmeals.MealsAdapter;
+import com.example.foodplanner.presentation.mealdetails.OnFavoriteClickListener;
 import com.example.foodplanner.presentation.search.SearchPresenter;
 import com.example.foodplanner.presentation.search.SearchPresenterImp;
 import com.example.foodplanner.presentation.search.ViewSearch;
@@ -23,7 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.List;
 
-public class SearchBottomSheetDialog extends BottomSheetDialogFragment implements ViewSearch, OnMealClickListener {
+public class SearchBottomSheetDialog extends BottomSheetDialogFragment implements ViewSearch, OnMealClickListener, OnFavoriteClickListener {
 
     private BottomSheetSearchBinding binding;
     private SearchPresenter presenter;
@@ -52,13 +53,13 @@ public class SearchBottomSheetDialog extends BottomSheetDialogFragment implement
     }
 
     private void setupRecyclerView() {
-        adapter = new MealsAdapter(this);
+        adapter = new MealsAdapter(this, this);
         binding.rvSearchResults.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvSearchResults.setAdapter(adapter);
     }
 
     private void setupPresenter() {
-        presenter = new SearchPresenterImp(this);
+        presenter = new SearchPresenterImp(this, requireContext());
     }
 
     private void setupSearchListener() {
@@ -142,6 +143,11 @@ public class SearchBottomSheetDialog extends BottomSheetDialogFragment implement
             presenter.onDestroy();
         }
         binding = null;
+    }
+
+    @Override
+    public void onFavoriteClicked(Meal meal) {
+        presenter.onFavoriteClicked(meal);
     }
 }
 
