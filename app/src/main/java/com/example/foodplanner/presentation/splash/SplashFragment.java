@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
@@ -15,9 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.example.foodplanner.R;
-import com.example.foodplanner.data.model.dataSource.local.SessionManager;
+import com.example.foodplanner.data.dataSource.local.SessionManager;
 import com.example.foodplanner.databinding.FragmentSplashBinding;
 
 public class SplashFragment extends Fragment {

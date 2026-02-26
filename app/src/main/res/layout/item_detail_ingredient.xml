@@ -21,8 +21,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:background="@drawable/bg_gradient">
+        android:paddingBottom="16dp">
 
         <!-- Modern Dot Indicator -->
         <View
