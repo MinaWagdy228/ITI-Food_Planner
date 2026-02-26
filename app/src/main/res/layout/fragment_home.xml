@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="24dp"
         android:text="Food Planner 🍽️"
         android:textColor="@color/primary"
         android:textSize="32sp"
@@ -25,28 +25,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Search Card -->
+    <!-- Modern Search Bar with Icon -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardSearch"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_margin="20dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="4dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="3dp"
         android:backgroundTint="@color/surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/outline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvHomeTitle">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingStart="20dp"
-            android:text="🔍 Search meals..."
-            android:textColor="@color/text_tertiary"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif" />
+            android:paddingEnd="20dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="@color/text_tertiary"
+                android:contentDescription="Search icon"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:text="Search meals, categories..."
+                android:textColor="@color/text_tertiary"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                app:tint="@color/text_tertiary"
+                android:contentDescription="Filter icon"/>
+        </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Meal of the Day Section -->
@@ -55,6 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
         android:text="Meal of the Day"
         android:textColor="@color/text_primary"
         android:textSize="22sp"
@@ -65,8 +93,10 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardMealOfDay"
         android:layout_width="0dp"
-        android:layout_height="220dp"
-        android:layout_margin="20dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="12dp"
         app:cardCornerRadius="24dp"
         app:cardElevation="6dp"
         android:backgroundTint="@color/surface"
@@ -119,7 +149,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:text="Categories"
         android:textColor="@color/text_primary"
         android:textSize="22sp"
@@ -127,15 +157,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardMealOfDay" />
 
-    <!-- Categories RecyclerView -->
+    <!-- Categories RecyclerView - Expands to fill remaining space -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCategories"
         android:layout_width="0dp"
-        android:layout_height="130dp"
+        android:layout_height="0dp"
         android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvCategoriesTitle" />
