@@ -104,6 +104,8 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
         Glide.with(requireContext())
                 .load(meal.getStrMealThumb())
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
                 .into(binding.imgMeal);
 
         binding.cardMealOfDay.setOnClickListener(v -> {
@@ -131,15 +133,17 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
     @Override
     public void showLoading() {
-        if (binding != null && binding.loadingCard != null) {
+        if (binding != null) {
             binding.loadingCard.setVisibility(View.VISIBLE);
+            binding.contentGroup.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void hideLoading() {
-        if (binding != null && binding.loadingCard != null) {
+        if (binding != null) {
             binding.loadingCard.setVisibility(View.GONE);
+            binding.contentGroup.setVisibility(View.VISIBLE);
         }
     }
 

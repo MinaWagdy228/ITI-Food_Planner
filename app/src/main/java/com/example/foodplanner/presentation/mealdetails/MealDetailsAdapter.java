@@ -111,6 +111,8 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         // Image
         Glide.with(holder.itemView.getContext())
                 .load(meal.getStrMealThumb())
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
                 .into(holder.binding.imgMealHeader);
 
         // Favorite Icon State (UI only, Presenter controls actual logic)

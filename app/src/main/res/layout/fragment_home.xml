@@ -115,8 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:contentDescription="Meal of the day"
-                android:src="@drawable/ic_launcher_background" />
+                android:contentDescription="Meal of the day" />
 
             <!-- Dark Gradient Overlay (for readability) -->
             <View
@@ -172,44 +171,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvCategoriesTitle" />
 
-    <!-- Modern Loading Indicator -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/loadingCard"
+    <!-- Group to control content visibility -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/contentGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="tvHomeTitle,cardSearch,tvMealOfDay,cardMealOfDay,tvCategoriesTitle,rvCategories" />
+
+    <!-- Elegant Loading Indicator -->
+    <ProgressBar
+        android:id="@+id/loadingCard"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:visibility="gone"
-        app:cardCornerRadius="28dp"
-        app:cardElevation="8dp"
-        android:backgroundTint="@color/surface"
+        android:indeterminateTint="@color/primary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="32dp"
-            android:gravity="center">
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:indeterminateTint="@color/primary"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Loading..."
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/text_primary"
-                android:layout_marginTop="16dp"/>
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

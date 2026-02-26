@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -34,7 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Link BottomNav with NavController
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNavigationView, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, 0, 0, systemBars.bottom);
+            return insets;
+        });
         // Hide BottomNav on specific screens
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             int id = destination.getId();

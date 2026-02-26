@@ -50,6 +50,8 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
 
         Glide.with(holder.itemView.getContext())
                 .load(meal.getStrMealThumb())
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
                 .into(holder.binding.imgMeal);
 
         holder.itemView.setOnClickListener(v -> listener.onMealClick(meal));

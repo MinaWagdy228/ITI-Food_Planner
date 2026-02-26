@@ -46,6 +46,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         Glide.with(holder.itemView.getContext())
                 .load(category.getStrCategoryThumb())
+                .placeholder(android.R.color.transparent)
+                .error(android.R.color.transparent)
                 .into(holder.binding.imgCategory);
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
