@@ -46,8 +46,17 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
 
         binding.tvTitle.setText(categoryName + " Meals");
 
-
+        setupRecyclerView();
         presenter.getMealsByCategory(categoryName);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Reload meals when returning from back stack (e.g., from MealDetails)
+        if (categoryName != null && presenter != null) {
+            presenter.getMealsByCategory(categoryName);
+        }
     }
 
     private void setupRecyclerView() {
@@ -61,9 +70,6 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
 
     @Override
     public void showMeals(List<Meal> meals) {
-        if (mealsAdapter == null) {
-            setupRecyclerView();
-        }
         mealsAdapter.setMeals(meals);
     }
 

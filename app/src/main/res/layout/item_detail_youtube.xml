@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardVideo"
     android:layout_width="match_parent"
     android:layout_height="220dp"
     android:layout_marginStart="16dp"
@@ -11,8 +12,8 @@
     app:cardElevation="6dp"
     android:backgroundTint="@color/surface">
 
-    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-        android:id="@+id/youtubePlayerView"
+    <WebView
+        android:id="@+id/youtubeWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </com.google.android.material.card.MaterialCardView>

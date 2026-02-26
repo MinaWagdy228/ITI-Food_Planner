@@ -15,12 +15,24 @@ public class PresenterImp implements Presenter {
 
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    // Cache to avoid redundant network calls
+    private String lastCategory = null;
+    private List<Meal> cachedMeals = null;
+
     public PresenterImp(ViewFilteredMeal viewFilteredMeal) {
         this.viewFilteredMeal = viewFilteredMeal;
     }
 
     @Override
     public void getMealsByCategory(String category) {
+        // Return cached data if same category
+        if (category != null && category.equals(lastCategory) && cachedMeals != null) {
+            if (viewFilteredMeal != null) {
+                viewFilteredMeal.showMeals(cachedMeals);
+            }
+            return;
+        }
+
         if (viewFilteredMeal != null) {
             viewFilteredMeal.showLoading();
         }
@@ -30,18 +42,23 @@ public class PresenterImp implements Presenter {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                this::handleSuccess,
+                                response -> handleSuccess(response, category),
                                 this::handleError
                         )
         );
     }
 
-    private void handleSuccess(MealsResponse mealsResponse) {
+    private void handleSuccess(MealsResponse mealsResponse, String category) {
         if (viewFilteredMeal != null) {
             viewFilteredMeal.hideLoading();
         }
         if (mealsResponse != null && mealsResponse.getMeals() != null) {
             List<Meal> filteredMealList = mealsResponse.getMeals();
+
+            // Cache the data
+            lastCategory = category;
+            cachedMeals = filteredMealList;
+
             viewFilteredMeal.showMeals(filteredMealList);
         }
     }
@@ -56,6 +73,8 @@ public class PresenterImp implements Presenter {
     @Override
     public void onDestroy() {
         compositeDisposable.clear();
+        cachedMeals = null;
+        lastCategory = null;
         viewFilteredMeal = null;
     }
 }

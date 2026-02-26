@@ -17,6 +17,11 @@ public class SearchPresenterImp implements SearchPresenter {
     private final MealApiServices api;
     private final CompositeDisposable compositeDisposable;
 
+    // Cache for search results
+    private List<Meal> cachedAllMeals = null;
+    private String lastSearchQuery = null;
+    private List<Meal> lastSearchResults = null;
+
     public SearchPresenterImp(ViewSearch view) {
         this.view = view;
         this.api = Network.getApiService();
@@ -25,6 +30,12 @@ public class SearchPresenterImp implements SearchPresenter {
 
     @Override
     public void loadAllMeals() {
+        // Return cached data if available
+        if (cachedAllMeals != null && !cachedAllMeals.isEmpty()) {
+            view.showMeals(cachedAllMeals);
+            return;
+        }
+
         view.showLoading();
 
         List<Meal> allMeals = new ArrayList<>();
@@ -38,6 +49,7 @@ public class SearchPresenterImp implements SearchPresenter {
                             .subscribe(response -> {
                                 if (response != null && response.getMeals() != null) {
                                     allMeals.addAll(response.getMeals());
+                                    cachedAllMeals = new ArrayList<>(allMeals);
                                     view.showMeals(allMeals);
                                 }
                                 view.hideLoading();
@@ -54,14 +66,27 @@ public class SearchPresenterImp implements SearchPresenter {
             return;
         }
 
+        // Return cached search results if query matches
+        if (query.equals(lastSearchQuery) && lastSearchResults != null) {
+            if (lastSearchResults.isEmpty()) {
+                view.showEmptyState();
+            } else {
+                view.showMeals(lastSearchResults);
+            }
+            return;
+        }
+
         compositeDisposable.add(
                 api.searchMealsByName(query)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(response -> {
+                            lastSearchQuery = query;
                             if (response != null && response.getMeals() != null) {
+                                lastSearchResults = response.getMeals();
                                 view.showMeals(response.getMeals());
                             } else {
+                                lastSearchResults = new ArrayList<>();
                                 view.showEmptyState();
                             }
                         }, throwable -> view.showError("Search failed"))
@@ -71,5 +96,8 @@ public class SearchPresenterImp implements SearchPresenter {
     @Override
     public void onDestroy() {
         compositeDisposable.clear();
+        cachedAllMeals = null;
+        lastSearchQuery = null;
+        lastSearchResults = null;
     }
 }

@@ -1,7 +1,16 @@
 package com.example.foodplanner.presentation.mealdetails;
 
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,16 +22,16 @@ import com.example.foodplanner.databinding.ItemDetailHeaderBinding;
 import com.example.foodplanner.databinding.ItemDetailIngredientBinding;
 import com.example.foodplanner.databinding.ItemDetailInstructionBinding;
 import com.example.foodplanner.databinding.ItemDetailYoutubeBinding;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "MealDetailsAdapter";
     private List<DetailItem> items = new ArrayList<>();
     private final OnFavoriteClickListener favoriteClickListener;
+    private final List<WebView> activeWebViews = new ArrayList<>();
 
     public MealDetailsAdapter(OnFavoriteClickListener favoriteClickListener) {
         this.favoriteClickListener = favoriteClickListener;
@@ -125,24 +134,103 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void bindYoutube(YoutubeViewHolder holder, String youtubeUrl) {
-        if (youtubeUrl == null || youtubeUrl.isEmpty()) return;
+        if (youtubeUrl == null || youtubeUrl.isEmpty()) {
+            holder.binding.cardVideo.setVisibility(View.GONE);
+            return;
+        }
 
-        String videoId = extractYoutubeId(youtubeUrl);
-        if (videoId == null) return;
+        String videoId = extractVideoId(youtubeUrl);
+        if (videoId == null || videoId.isEmpty()) {
+            holder.binding.cardVideo.setVisibility(View.GONE);
+            return;
+        }
 
-        YouTubePlayerView playerView = holder.binding.youtubePlayerView;
+        holder.binding.cardVideo.setVisibility(View.VISIBLE);
+        WebView webView = holder.binding.youtubeWebView;
 
-        playerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+        // Track WebView for lifecycle management
+        if (!activeWebViews.contains(webView)) {
+            activeWebViews.add(webView);
+        }
+
+        setupWebView(webView);
+        loadYoutubeVideo(webView, videoId);
+    }
+
+    private void setupWebView(WebView webView) {
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setLoadsImagesAutomatically(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
+        webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+
+        webSettings.setUserAgentString(
+                "Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 " +
+                        "Chrome/120.0.0.0 Mobile Safari/537.36"
+        );
+
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        webView.setWebChromeClient(new WebChromeClient());
+
+        webView.setWebViewClient(new WebViewClient() {
             @Override
-            public void onReady(@NonNull com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer youTubePlayer) {
-                youTubePlayer.cueVideo(videoId, 0);
+            public void onReceivedError(
+                    WebView view,
+                    WebResourceRequest request,
+                    WebResourceError error
+            ) {
+                super.onReceivedError(view, request, error);
+                Log.e(TAG, "WebView error: " + error);
             }
         });
     }
 
-    private String extractYoutubeId(String url) {
-        if (url.contains("v=")) {
-            return url.substring(url.indexOf("v=") + 2);
+    private void loadYoutubeVideo(WebView webView, String videoId) {
+        String html =
+                "<!DOCTYPE html>" +
+                        "<html>" +
+                        "<head>" +
+                        "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+                        "<style>" +
+                        "html, body { margin: 0; padding: 0; background: black; width: 100%; height: 100%; }" +
+                        "iframe { width: 100%; height: 100%; border: 0; }" +
+                        "</style>" +
+                        "</head>" +
+                        "<body>" +
+                        "<iframe src='https://www.youtube-nocookie.com/embed/" + videoId +
+                        "?playsinline=1&rel=0' " +
+                        "allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share' " +
+                        "allowfullscreen></iframe>" +
+                        "</body>" +
+                        "</html>";
+
+        webView.loadDataWithBaseURL(
+                "https://www.youtube-nocookie.com",
+                html,
+                "text/html",
+                "UTF-8",
+                null
+        );
+    }
+
+    private String extractVideoId(String url) {
+        try {
+            Uri uri = Uri.parse(url);
+
+            // Handle youtube.com/watch?v=VIDEO_ID format
+            if (uri.getQueryParameter("v") != null) {
+                return uri.getQueryParameter("v");
+            }
+
+            // Handle youtu.be/VIDEO_ID format
+            if (url.contains("youtu.be/")) {
+                return uri.getLastPathSegment();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Video ID extraction failed", e);
         }
         return null;
     }
@@ -150,6 +238,34 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    // Lifecycle management methods
+    public void onPause() {
+        for (WebView webView : activeWebViews) {
+            if (webView != null) {
+                webView.onPause();
+                webView.pauseTimers();
+            }
+        }
+    }
+
+    public void onResume() {
+        for (WebView webView : activeWebViews) {
+            if (webView != null) {
+                webView.onResume();
+                webView.resumeTimers();
+            }
+        }
+    }
+
+    public void onDestroy() {
+        for (WebView webView : activeWebViews) {
+            if (webView != null) {
+                webView.destroy();
+            }
+        }
+        activeWebViews.clear();
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {

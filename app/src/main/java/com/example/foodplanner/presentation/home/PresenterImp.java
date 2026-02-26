@@ -20,6 +20,9 @@ public class PresenterImp implements Presenter {
     private ViewHome viewHome;
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    // Cache for categories to avoid redundant API calls
+    private List<Category> cachedCategories = null;
+
     public PresenterImp(ViewHome viewHome) {
         this.viewHome = viewHome;
     }
@@ -65,6 +68,14 @@ public class PresenterImp implements Presenter {
 
     @Override
     public void getCategories() {
+        // Return cached categories if available
+        if (cachedCategories != null && !cachedCategories.isEmpty()) {
+            if (viewHome != null) {
+                viewHome.showCategories(cachedCategories);
+            }
+            return;
+        }
+
         compositeDisposable.add(
                 Network.getApiService()
                         .getCategories()
@@ -80,6 +91,10 @@ public class PresenterImp implements Presenter {
     private void handleCategoriesSuccess(CategoriesResponse response) {
         if (response != null && response.getCategories() != null) {
             List<Category> categories = response.getCategories();
+
+            // Cache the categories
+            cachedCategories = categories;
+
             if (viewHome != null) {
                 viewHome.showCategories(categories);
             }
@@ -89,6 +104,7 @@ public class PresenterImp implements Presenter {
     @Override
     public void onDestroy() {
         compositeDisposable.clear();
+        cachedCategories = null;
         viewHome = null;
     }
 }

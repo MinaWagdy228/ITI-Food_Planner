@@ -26,6 +26,7 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
     private FragmentSearchBinding binding;
     private SearchPresenter presenter;
     private MealsAdapter adapter;
+    private String currentSearchQuery = ""; // Preserve search query
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -44,6 +45,19 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
         setupSearchListener();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Restore search results when returning from back stack
+        if (presenter != null) {
+            if (currentSearchQuery != null && !currentSearchQuery.isEmpty()) {
+                presenter.searchMeals(currentSearchQuery);
+            } else {
+                presenter.loadAllMeals();
+            }
+        }
+    }
+
     private void setupRecycler() {
         adapter = new MealsAdapter(this);
         binding.rvSearch.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -54,7 +68,8 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                presenter.searchMeals(s.toString());
+                currentSearchQuery = s.toString();
+                presenter.searchMeals(currentSearchQuery);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -110,5 +125,14 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
                 "Error: " + message,
                 android.widget.Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (presenter != null) {
+            presenter.onDestroy();
+        }
+        binding = null;
     }
 }

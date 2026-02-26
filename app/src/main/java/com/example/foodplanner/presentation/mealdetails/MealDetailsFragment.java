@@ -150,7 +150,26 @@ public class MealDetailsFragment extends Fragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (adapter != null) {
+            adapter.onDestroy();
+        }
         binding = null;
         presenter.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adapter != null) {
+            adapter.onPause();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter != null) {
+            adapter.onResume();
+        }
     }
 }

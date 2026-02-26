@@ -1,7 +1,6 @@
 package com.example.foodplanner.presentation.home;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -15,7 +14,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
-import com.example.foodplanner.R;
 import com.example.foodplanner.data.model.Category;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.FragmentHomeBinding;
@@ -52,7 +50,13 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
         super.onViewCreated(view, savedInstanceState);
 
         presenter = new PresenterImp(this);
+
+        // Initialize categories RecyclerView first
+        setupCategoriesRecycler();
+
+        // Load initial data
         presenter.getRandomMeal();
+        presenter.getCategories();
 
         // Setup SwipeRefreshLayout
         binding.swipeRefresh.setOnRefreshListener(() -> {
@@ -86,10 +90,9 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("HomeFragment", "onResume: triggered");
+        // Reload categories when returning (uses cache if available)
         if (presenter != null) {
             presenter.getCategories();
-            Log.d("HomeFragment", "onResume: Refreshed categories");
         }
     }
 
@@ -154,9 +157,6 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
     @Override
     public void showCategories(List<Category> categories) {
-        if (categoriesAdapter == null) {
-            setupCategoriesRecycler();
-        }
         categoriesAdapter.setCategories(categories);
 
         // Stop refreshing animation
