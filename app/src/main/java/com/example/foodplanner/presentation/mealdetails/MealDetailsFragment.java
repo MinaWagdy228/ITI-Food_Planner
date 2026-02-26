@@ -69,6 +69,9 @@ public class MealDetailsFragment extends Fragment
         // Header (Image + Title + Favorite Icon)
         items.add(new DetailItem(DetailItem.TYPE_HEADER, meal));
 
+        // Section Header: Ingredients
+        items.add(new DetailItem(DetailItem.TYPE_SECTION_HEADER, "Required Ingredients"));
+
         //  Ingredients (Dynamic extraction 1–20)
         addIngredient(items, meal.getStrIngredient1());
         addIngredient(items, meal.getStrIngredient2());
@@ -93,6 +96,9 @@ public class MealDetailsFragment extends Fragment
 
         // Instructions Section
         if (!TextUtils.isEmpty(meal.getStrInstructions())) {
+            // Section Header: Instructions
+            items.add(new DetailItem(DetailItem.TYPE_SECTION_HEADER, "Meal Instructions"));
+
             items.add(new DetailItem(
                     DetailItem.TYPE_INSTRUCTIONS,
                     meal.getStrInstructions()
@@ -101,6 +107,9 @@ public class MealDetailsFragment extends Fragment
 
         // YouTube Section (Embedded Player)
         if (!TextUtils.isEmpty(meal.getStrYoutube())) {
+            // Section Header: Video Tutorial
+            items.add(new DetailItem(DetailItem.TYPE_SECTION_HEADER, "Video Tutorial"));
+
             items.add(new DetailItem(
                     DetailItem.TYPE_YOUTUBE,
                     meal.getStrYoutube()

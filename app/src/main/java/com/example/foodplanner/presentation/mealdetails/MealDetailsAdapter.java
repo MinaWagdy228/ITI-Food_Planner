@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.example.foodplanner.R;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.ItemDetailHeaderBinding;
+import com.example.foodplanner.databinding.ItemDetailSectionHeaderBinding;
 import com.example.foodplanner.databinding.ItemDetailIngredientBinding;
 import com.example.foodplanner.databinding.ItemDetailInstructionBinding;
 import com.example.foodplanner.databinding.ItemDetailYoutubeBinding;
@@ -56,6 +57,10 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ItemDetailHeaderBinding binding =
                     ItemDetailHeaderBinding.inflate(inflater, parent, false);
             return new HeaderViewHolder(binding);
+        } else if (viewType == DetailItem.TYPE_SECTION_HEADER) {
+            ItemDetailSectionHeaderBinding binding =
+                    ItemDetailSectionHeaderBinding.inflate(inflater, parent, false);
+            return new SectionHeaderViewHolder(binding);
         } else if (viewType == DetailItem.TYPE_INGREDIENT) {
             ItemDetailIngredientBinding binding =
                     ItemDetailIngredientBinding.inflate(inflater, parent, false);
@@ -79,6 +84,10 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             case DetailItem.TYPE_HEADER:
                 bindHeader((HeaderViewHolder) holder, (Meal) item.getData());
+                break;
+
+            case DetailItem.TYPE_SECTION_HEADER:
+                bindSectionHeader((SectionHeaderViewHolder) holder, (String) item.getData());
                 break;
 
             case DetailItem.TYPE_INGREDIENT:
@@ -123,6 +132,10 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 favoriteClickListener.onFavoriteClicked(meal);
             }
         });
+    }
+
+    private void bindSectionHeader(SectionHeaderViewHolder holder, String title) {
+        holder.binding.tvSectionTitle.setText(title);
     }
 
     private void bindIngredient(IngredientViewHolder holder, String ingredient) {
@@ -271,6 +284,14 @@ public class MealDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         ItemDetailHeaderBinding binding;
         HeaderViewHolder(ItemDetailHeaderBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
+
+    static class SectionHeaderViewHolder extends RecyclerView.ViewHolder {
+        ItemDetailSectionHeaderBinding binding;
+        SectionHeaderViewHolder(ItemDetailSectionHeaderBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
