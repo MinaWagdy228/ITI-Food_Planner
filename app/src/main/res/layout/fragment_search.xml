@@ -21,34 +21,66 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
+    <!-- Modern Search Bar with Icon (Same as Home Screen) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSearch"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Search meals..."
+        android:layout_height="56dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
-        app:boxCornerRadiusTopStart="16dp"
-        app:boxCornerRadiusTopEnd="16dp"
-        app:boxCornerRadiusBottomStart="16dp"
-        app:boxCornerRadiusBottomEnd="16dp"
-        app:boxStrokeColor="@color/primary"
-        app:hintTextColor="@color/primary"
-        app:startIconDrawable="@android:drawable/ic_menu_search"
-        app:startIconTint="@color/text_secondary"
-        app:layout_constraintTop_toBottomOf="@id/tvSearchTitle"
-        app:layout_constraintStart_toStartOf="parent"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="3dp"
+        android:backgroundTint="@color/surface"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/outline"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSearchTitle">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearch"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/text_primary"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
+
+            <ImageView
+                android:id="@+id/ivSearchIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="@color/text_tertiary"
+                android:contentDescription="Search icon"/>
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="Search meals, categories..."
+                android:textColorHint="@color/text_tertiary"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionSearch" />
+
+            <ImageView
+                android:id="@+id/ivFilterIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                app:tint="@color/text_tertiary"
+                android:contentDescription="Filter icon"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvSearch"
@@ -56,7 +88,7 @@
         android:layout_height="0dp"
         android:paddingTop="16dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/searchLayout"
+        app:layout_constraintTop_toBottomOf="@id/cardSearch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

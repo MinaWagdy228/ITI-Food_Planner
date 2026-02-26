@@ -136,8 +136,12 @@
         tools:layout="@layout/fragment_filtered_meals">
 
         <argument
-            android:name="categoryName"
+            android:name="filterValue"
             app:argType="string" />
+        <argument
+            android:name="filterType"
+            app:argType="string"
+            android:defaultValue="category" />
         <action
             android:id="@+id/action_filteredMealsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

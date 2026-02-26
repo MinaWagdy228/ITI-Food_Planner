@@ -23,7 +23,8 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
     private FragmentFilteredMealsBinding binding;
     private Presenter presenter;
     private MealsAdapter mealsAdapter;
-    private String categoryName;
+    private String filterValue;
+    private String filterType;
 
     public FilteredMealsFragment() {
     }
@@ -42,20 +43,49 @@ public class FilteredMealsFragment extends Fragment implements ViewFilteredMeal,
         presenter = new PresenterImp(this);
         FilteredMealsFragmentArgs args =
                 FilteredMealsFragmentArgs.fromBundle(getArguments());
-        categoryName = args.getCategoryName();
+        filterValue = args.getFilterValue();
+        filterType = args.getFilterType();
 
-        binding.tvTitle.setText(categoryName + " Meals");
+        // Set appropriate title based on filter type
+        binding.tvTitle.setText(getTitleForFilter(filterValue, filterType));
 
         setupRecyclerView();
-        presenter.getMealsByCategory(categoryName);
+        loadMeals();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         // Reload meals when returning from back stack (e.g., from MealDetails)
-        if (categoryName != null && presenter != null) {
-            presenter.getMealsByCategory(categoryName);
+        if (filterValue != null && presenter != null) {
+            loadMeals();
+        }
+    }
+
+    private void loadMeals() {
+        switch (filterType) {
+            case "area":
+                presenter.getMealsByArea(filterValue);
+                break;
+            case "ingredient":
+                presenter.getMealsByIngredient(filterValue);
+                break;
+            case "category":
+            default:
+                presenter.getMealsByCategory(filterValue);
+                break;
+        }
+    }
+
+    private String getTitleForFilter(String value, String type) {
+        switch (type) {
+            case "area":
+                return value + " Cuisine";
+            case "ingredient":
+                return value + " Dishes";
+            case "category":
+            default:
+                return value + " Meals";
         }
     }
 

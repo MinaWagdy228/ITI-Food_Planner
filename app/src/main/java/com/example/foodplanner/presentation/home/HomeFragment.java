@@ -17,14 +17,23 @@ import com.bumptech.glide.Glide;
 import com.example.foodplanner.data.model.Category;
 import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.FragmentHomeBinding;
+import com.example.foodplanner.presentation.common.OnMealClickListener;
+import com.example.foodplanner.presentation.filteredmeals.MealsAdapter;
+import com.example.foodplanner.presentation.search.SearchPresenter;
+import com.example.foodplanner.presentation.search.SearchPresenterImp;
+import com.example.foodplanner.presentation.search.ViewSearch;
 
 import java.util.List;
 
-public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicked {
+public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicked, ViewSearch, OnMealClickListener {
 
     private FragmentHomeBinding binding;
     private Presenter presenter;
     private CategoriesAdapter categoriesAdapter;
+
+    // Search suggestions
+    private SearchPresenter searchPresenter;
+    private MealsAdapter searchSuggestionsAdapter;
 
     private Meal randomMeal;
 
@@ -53,6 +62,10 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
 
         // Initialize categories RecyclerView first
         setupCategoriesRecycler();
+
+        // Initialize search functionality
+        setupSearchSuggestions();
+        setupSearchClickListeners();
 
         // Load initial data
         presenter.getRandomMeal();
@@ -169,19 +182,79 @@ public class HomeFragment extends Fragment implements ViewHome, OnCategoryClicke
         }
     }
 
+    // ===== Search Suggestions Methods =====
+
+    private void setupSearchSuggestions() {
+        // Initialize search presenter
+        searchPresenter = new SearchPresenterImp(this);
+
+        // Setup suggestions RecyclerView
+        searchSuggestionsAdapter = new MealsAdapter(this);
+        binding.rvSearchSuggestions.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvSearchSuggestions.setAdapter(searchSuggestionsAdapter);
+    }
+
+    private void setupSearchClickListeners() {
+        // Open search bottom sheet when clicking the search bar
+        binding.cardSearch.setOnClickListener(v -> {
+            SearchBottomSheetDialog searchDialog = new SearchBottomSheetDialog();
+            searchDialog.show(getChildFragmentManager(), "SearchBottomSheet");
+        });
+
+        // Open filter bottom sheet when clicking the filter icon
+        View filterIcon = binding.cardSearch.getChildAt(0); // LinearLayout
+        if (filterIcon instanceof android.view.ViewGroup) {
+            android.view.ViewGroup linearLayout = (android.view.ViewGroup) filterIcon;
+            View icon = linearLayout.getChildAt(linearLayout.getChildCount() - 1); // Last child is filter icon
+            icon.setOnClickListener(v -> {
+                FilterBottomSheetDialog filterDialog = new FilterBottomSheetDialog();
+                filterDialog.show(getChildFragmentManager(), "FilterBottomSheet");
+            });
+        }
+    }
+
+    // ViewSearch implementation for search suggestions
+    @Override
+    public void showMeals(List<Meal> meals) {
+        if (meals != null && !meals.isEmpty()) {
+            searchSuggestionsAdapter.setMeals(meals);
+            binding.rvSearchSuggestions.setVisibility(View.VISIBLE);
+        } else {
+            binding.rvSearchSuggestions.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void showEmptyState() {
+        binding.rvSearchSuggestions.setVisibility(View.GONE);
+    }
+
+    // OnMealClickListener implementation for suggestions
+    @Override
+    public void onMealClick(Meal meal) {
+        binding.rvSearchSuggestions.setVisibility(View.GONE);
+        HomeFragmentDirections.ActionHomeFragmentToMealDetailsFragment action =
+                HomeFragmentDirections.actionHomeFragmentToMealDetailsFragment(meal.getIdMeal());
+        NavHostFragment.findNavController(this).navigate(action);
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         presenter.onDestroy();
+        if (searchPresenter != null) {
+            searchPresenter.onDestroy();
+        }
         binding = null;
     }
 
     @Override
     public void onCategoryClicked(String categoryName) {
-        HomeFragmentDirections.ActionHomeFragmentToFilteredMealsFragment action =
-                HomeFragmentDirections.actionHomeFragmentToFilteredMealsFragment(categoryName);
+        android.os.Bundle bundle = new android.os.Bundle();
+        bundle.putString("filterValue", categoryName);
+        bundle.putString("filterType", "category");
 
         NavHostFragment.findNavController(HomeFragment.this)
-                .navigate(action);
+                .navigate(com.example.foodplanner.R.id.filteredMealsFragment, bundle);
     }
 }

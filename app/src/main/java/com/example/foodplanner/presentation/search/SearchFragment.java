@@ -17,6 +17,7 @@ import com.example.foodplanner.data.model.Meal;
 import com.example.foodplanner.databinding.FragmentSearchBinding;
 import com.example.foodplanner.presentation.common.OnMealClickListener;
 import com.example.foodplanner.presentation.filteredmeals.MealsAdapter;
+import com.example.foodplanner.presentation.home.FilterBottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
         presenter.loadAllMeals(); // 🔥 default load
 
         setupSearchListener();
+        setupFilterButton();
     }
 
     @Override
@@ -77,6 +79,14 @@ public class SearchFragment extends Fragment implements ViewSearch, OnMealClickL
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+        });
+    }
+
+    private void setupFilterButton() {
+        // Open filter bottom sheet when clicking the filter icon
+        binding.ivFilterIcon.setOnClickListener(v -> {
+            FilterBottomSheetDialog filterDialog = new FilterBottomSheetDialog();
+            filterDialog.show(getChildFragmentManager(), "FilterBottomSheet");
         });
     }
 
